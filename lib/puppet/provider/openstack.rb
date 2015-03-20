@@ -68,11 +68,10 @@ class Puppet::Provider::Openstack < Puppet::Provider
           openstack(service, action, '--format', 'shell', args).split("\n").each do |line|
             # key is everything before the first "="
             key, val = line.split("=", 2)
-            if(val)
-              # value is everything after the first "=", with leading and trailing double quotes stripped
-              val = val.gsub(/\A"|"\Z/, '')
-              rv[key.downcase.to_sym] = val
-            end
+            next unless val # Ignore warnings
+            # value is everything after the first "=", with leading and trailing double quotes stripped
+            val = val.gsub(/\A"|"\Z/, '')
+            rv[key.downcase.to_sym] = val
           end
         else
           rv = openstack(service, action, args)
